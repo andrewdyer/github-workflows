@@ -2,6 +2,10 @@
 
 # GitHub Workflows
 
+## License
+
+Licensed under the [MIT license](https://opensource.org/licenses/MIT) and is free for private or commercial projects.
+
 ## Introduction
 
 This repository contains a collection of GitHub Actions and workflows designed to streamline the development process for Node.js and TypeScript projects.
