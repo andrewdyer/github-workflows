@@ -1,0 +1,23 @@
+name: Type-check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  typecheck:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+  
+        - name: Prepare environment
+          uses: ./.github/actions/prepare-node
+  
+        - name: Run type-check
+          run: npm run type-check
+
