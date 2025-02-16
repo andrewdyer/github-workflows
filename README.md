@@ -1,3 +1,5 @@
+![GitHub Workflows](https://raw.githubusercontent.com/andrewdyer/andrewdyer/refs/heads/main/assets/images/covers/github-workflows.png)
+
 # 👷🏻‍♂️ GitHub Workflows
 
 ## 📖 Usage
