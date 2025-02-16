@@ -2,6 +2,10 @@
 
 # GitHub Workflows
 
+## Introduction
+
+This repository contains a collection of GitHub Actions and workflows designed to streamline the development process for Node.js and TypeScript projects.
+
 ## Usage
 
 ### Prepare Node
