@@ -1,0 +1,28 @@
+name: Prepare Node.js Environment
+description: Sets up Node.js and installs dependencies for TypeScript projects in CI
+
+inputs:
+  package-manager:
+    description: "Package manager to use (npm, yarn, pnpm)"
+    required: false
+    default: "npm"
+
+runs:
+  using: composite
+  steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: ${{ inputs.package-manager }}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ "${{ inputs.package-manager }}" = "yarn" ]; then
+          yarn install --frozen-lockfile
+        elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+          pnpm install --frozen-lockfile
+        else
+          npm ci
+        fi
