@@ -2,6 +2,8 @@
 
 # GitHub Workflows
 
+A collection of GitHub Actions and workflows to automate and streamline development processes.
+
 ## License
 
 Licensed under the [MIT license](https://opensource.org/licenses/MIT) and is free for private or commercial projects.
