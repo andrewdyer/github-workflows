@@ -16,6 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache dependencies (npm, yarn, pnpm)
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ~/.yarn
+            ~/.pnpm-store
+          key: ${{ runner.os }}-${{ inputs.package-manager }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ inputs.package-manager }}-
+
       - name: Prepare environment
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
         with:
