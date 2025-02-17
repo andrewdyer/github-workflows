@@ -17,6 +17,7 @@ inputs:
     required: false
     default: "https://registry.npmjs.org"
     type: string
+
 runs:
   using: composite
   steps:
