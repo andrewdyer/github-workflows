@@ -31,3 +31,27 @@ jobs:
         with:
           package-manager: yarn
 ```
+
+### Workflows
+
+Reusable workflows for different technologies.
+
+#### **Node Build**
+
+A workflow to build Node.js projects, including steps for checking out the repository, preparing the environment, and running the build script.
+
+```yml
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: andrewdyer/github-workflows/workflows/node/build.yml@main
+```
