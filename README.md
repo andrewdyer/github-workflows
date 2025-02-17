@@ -12,13 +12,9 @@ Licensed under the [MIT license](https:/opensource.org/licenses/MIT) and is free
 
 This repository contains a collection of GitHub Actions and workflows designed to streamline the development process for Node.js and TypeScript projects.
 
-## Usage
+## Actions
 
-### Actions
-
-Reusable actions to be used in workflows.
-
-#### **Cache Dependencies**
+### Cache Dependencies
 
 This action caches dependencies for package managers to speed up workflow execution.
 
@@ -32,13 +28,13 @@ jobs:
           package-manager: yarn
 ```
 
-**Supported Inputs**
+#### **Supported Inputs**
 
 | Input           | Description                              | Type   | Required | Default |
 | --------------- | ---------------------------------------- | ------ | -------- | ------- |
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | true     |         |
 
-#### **Prepare Node**
+### Prepare Node
 
 This action sets up a Node.js environment and installs dependencies for TypeScript projects.
 
@@ -54,7 +50,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
 ```
 
-**Supported Inputs**
+#### **Supported Inputs**
 
 | Input           | Description                              | Type   | Required | Default                     |
 | --------------- | ---------------------------------------- | ------ | -------- | --------------------------- |
@@ -62,11 +58,9 @@ jobs:
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm                         |
 | registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
-### Workflows
+## Workflows
 
-Reusable workflows for different technologies.
-
-#### **Node Build**
+### Node Build
 
 A workflow to build Node.js projects, including steps for checking out the repository, preparing the environment, and running the build script.
 
@@ -86,7 +80,7 @@ jobs:
     uses: andrewdyer/github-workflows/.github/workflows/build.yml@main
 ```
 
-#### **Node Test**
+### Node Test
 
 A workflow to test Node.js projects, including steps for checking out the repository, preparing the environment, and running the test script.
 
@@ -106,7 +100,7 @@ jobs:
     uses: andrewdyer/github-workflows/.github/workflows/test.yml@main
 ```
 
-#### **Node Type-check**
+### Node Type-check
 
 A workflow to run type-checking for Node.js projects, including steps for checking out the repository, preparing the environment, and running the type-check script.
 
