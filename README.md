@@ -1,4 +1,4 @@
-![GitHub Workflows](https://raw.githubusercontent.com/andrewdyer/andrewdyer/refs/heads/main/assets/images/covers/github-workflows.png)
+![GitHub Workflows](https:/raw.githubusercontent.com/andrewdyer/andrewdyer/refs/heads/main/assets/images/covers/github-workflows.png)
 
 # GitHub Workflows
 
@@ -6,7 +6,7 @@ A collection of GitHub Actions and workflows to automate and streamline developm
 
 ## License
 
-Licensed under the [MIT license](https://opensource.org/licenses/MIT) and is free for private or commercial projects.
+Licensed under the [MIT license](https:/opensource.org/licenses/MIT) and is free for private or commercial projects.
 
 ## Introduction
 
@@ -53,7 +53,7 @@ on:
 
 jobs:
   build:
-    uses: andrewdyer/github-workflows/.github/workflows/node/build.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/build.yml@main
 ```
 
 #### **Node Test**
@@ -73,7 +73,7 @@ on:
 
 jobs:
   test:
-    uses: andrewdyer/github-workflows/.github/workflows/node/test.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/test.yml@main
 ```
 
 #### **Node Type-check**
@@ -93,5 +93,5 @@ on:
 
 jobs:
   typecheck:
-    uses: andrewdyer/github-workflows/.github/workflows/node/type-check.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/type-check.yml@main
 ```
