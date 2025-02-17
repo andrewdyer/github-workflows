@@ -32,6 +32,8 @@ jobs:
           package-manager: yarn
 ```
 
+**Supported Inputs**
+
 | Input           | Description                              | Type   | Required | Default |
 | --------------- | ---------------------------------------- | ------ | -------- | ------- |
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | true     |         |
@@ -51,6 +53,8 @@ jobs:
           package-manager: yarn
           registry-url: https://npm.pkg.github.com/
 ```
+
+**Supported Inputs**
 
 | Input           | Description                              | Type   | Required | Default                     |
 | --------------- | ---------------------------------------- | ------ | -------- | --------------------------- |
