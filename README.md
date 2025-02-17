@@ -18,6 +18,20 @@ This repository contains a collection of GitHub Actions and workflows designed t
 
 Reusable actions to be used in workflows.
 
+#### **Cache Dependencies**
+
+This action caches dependencies for `npm`, `yarn`, and `pnpm` package managers to speed up workflow execution.
+
+```yml
+jobs:
+  build:
+    steps:
+      - name: Cache Dependencies
+        uses: andrewdyer/github-workflows/.github/actions/cache-dependencies@main
+        with:
+          package-manager: yarn
+```
+
 #### **Prepare Node**
 
 This action sets up a Node.js environment and installs dependencies for TypeScript projects. It supports `npm`, `yarn`, and `pnpm` as package managers.
