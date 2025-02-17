@@ -55,3 +55,23 @@ jobs:
   build:
     uses: andrewdyer/github-workflows/workflows/node/build.yml@main
 ```
+
+#### **Node Test**
+
+A workflow to test Node.js projects, including steps for checking out the repository, preparing the environment, and running the test script.
+
+```yml
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    uses: andrewdyer/github-workflows/workflows/node/test.yml@main
+```
