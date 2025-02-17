@@ -14,9 +14,13 @@ This repository contains a collection of GitHub Actions and workflows designed t
 
 ## Usage
 
-### Prepare Node
+### Actions
 
-This action sets up a Node.js environment and installs dependencies for TypeScript projects. It supports npm, yarn, and pnpm as package managers.
+Reusable actions to be used in workflows.
+
+#### **Prepare Node**
+
+This action sets up a Node.js environment and installs dependencies for TypeScript projects. It supports `npm`, `yarn`, and `pnpm` as package managers.
 
 ```yml
 jobs:
