@@ -1,7 +1,13 @@
 name: Type-check
 
 on:
-  workflow_call
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use (npm, yarn, pnpm)"
+        required: false
+        default: "npm"
+        type: string
 
 jobs:
   typecheck:
@@ -12,6 +18,16 @@ jobs:
 
       - name: Prepare environment
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
+        with:
+          package-manager: ${{ inputs.package-manager }} 
 
       - name: Run type-check
-        run: npm run type-check
+        shell: bash
+        run: |
+          if [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn type-check
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm run type-check
+          else
+            npm run type-check
+          fi

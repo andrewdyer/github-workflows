@@ -1,7 +1,13 @@
 name: Test
 
 on:
-  workflow_call
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use (npm, yarn, pnpm)"
+        required: false
+        default: "npm"
+        type: string
 
 jobs:
   test:
@@ -12,7 +18,16 @@ jobs:
 
       - name: Prepare environment
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
+        with:
+          package-manager: ${{ inputs.package-manager }} 
 
       - name: Run tests
-        run: npm test
-        
+        shell: bash
+        run: |
+          if [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn test
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm test
+          else
+            npm test
+          fi

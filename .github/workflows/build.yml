@@ -1,10 +1,16 @@
 name: Build
 
 on:
-  workflow_call
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use (npm, yarn, pnpm)"
+        required: false
+        default: "npm"
+        type: string
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -12,6 +18,16 @@ jobs:
 
       - name: Prepare environment
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
+        with:
+          package-manager: ${{ inputs.package-manager }}
 
       - name: Run build
-        run: npm run build
+        shell: bash
+        run: |
+          if [ "${{ inputs.package-manager }}" = "yarn" ]; then
+            yarn build
+          elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+            pnpm run build
+          else
+            npm run build
+          fi
