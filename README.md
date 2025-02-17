@@ -32,6 +32,10 @@ jobs:
           package-manager: yarn
 ```
 
+| Input           | Description                              | Type   | Required | Default |
+| --------------- | ---------------------------------------- | ------ | -------- | ------- |
+| package-manager | Package manager to use (npm, yarn, pnpm) | string | true     |         |
+
 #### **Prepare Node**
 
 This action sets up a Node.js environment and installs dependencies for TypeScript projects. It supports `npm`, `yarn`, and `pnpm` as package managers.
