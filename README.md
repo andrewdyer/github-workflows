@@ -53,7 +53,7 @@ on:
 
 jobs:
   build:
-    uses: andrewdyer/github-workflows/workflows/node/build.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/node/build.yml@main
 ```
 
 #### **Node Test**
@@ -73,7 +73,7 @@ on:
 
 jobs:
   test:
-    uses: andrewdyer/github-workflows/workflows/node/test.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/node/test.yml@main
 ```
 
 #### **Node Type-check**
@@ -93,5 +93,5 @@ on:
 
 jobs:
   typecheck:
-    uses: andrewdyer/github-workflows/workflows/node/type-check.yml@main
+    uses: andrewdyer/github-workflows/.github/workflows/node/type-check.yml@main
 ```
