@@ -75,3 +75,23 @@ jobs:
   test:
     uses: andrewdyer/github-workflows/workflows/node/test.yml@main
 ```
+
+#### **Node Type-check**
+
+A workflow to run type-checking for Node.js projects, including steps for checking out the repository, preparing the environment, and running the type-check script.
+
+```yml
+name: Type-check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  typecheck:
+    uses: andrewdyer/github-workflows/workflows/node/type-check.yml@main
+```

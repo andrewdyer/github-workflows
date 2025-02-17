@@ -1,0 +1,17 @@
+name: Type-check
+
+on:
+  workflow_call
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare environment
+        uses: andrewdyer/github-workflows/actions/prepare-node@main
+
+      - name: Run type-check
+        run: npm run type-check
