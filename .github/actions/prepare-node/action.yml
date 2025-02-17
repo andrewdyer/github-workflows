@@ -37,3 +37,4 @@ runs:
           pnpm install --frozen-lockfile
         else
           npm ci
+        fi
