@@ -44,7 +44,13 @@ jobs:
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
         with:
           package-manager: yarn
+          registry-url: https://registry.npmjs.org/
 ```
+
+| Input           | Description                              | Type   | Required | Default |
+| --------------- | ---------------------------------------- | ------ | -------- | ------- |
+| package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm     |
+| registry-url    | Custom registry URL for dependencies     | string | false    |         |
 
 ### Workflows
 
