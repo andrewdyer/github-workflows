@@ -23,7 +23,7 @@ jobs:
   build:
     steps:
       - name: Prepare Environment
-        uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
+        uses: andrewdyer/github-workflows/actions/prepare-node@main
         with:
           package-manager: yarn
 ```
