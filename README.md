@@ -43,16 +43,16 @@ jobs:
       - name: Prepare Environment
         uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
         with:
-          package-manager: yarn
-          registry-url: https://registry.npmjs.org/
           node-version: 16
+          package-manager: yarn
+          registry-url: https://npm.pkg.github.com/
 ```
 
-| Input           | Description                              | Type   | Required | Default |
-| --------------- | ---------------------------------------- | ------ | -------- | ------- |
-| node-version    | Node.js version to use                   | string | false    | 20      |
-| package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm     |
-| registry-url    | Custom registry URL for dependencies     | string | false    |         |
+| Input           | Description                              | Type   | Required | Default                     |
+| --------------- | ---------------------------------------- | ------ | -------- | --------------------------- |
+| node-version    | Node.js version to use                   | string | false    | 20                          |
+| package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm                         |
+| registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
 ### Workflows
 
