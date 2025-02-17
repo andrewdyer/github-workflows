@@ -45,10 +45,12 @@ jobs:
         with:
           package-manager: yarn
           registry-url: https://registry.npmjs.org/
+          node-version: 16
 ```
 
 | Input           | Description                              | Type   | Required | Default |
 | --------------- | ---------------------------------------- | ------ | -------- | ------- |
+| node-version    | Node.js version to use                   | string | false    | 20      |
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm     |
 | registry-url    | Custom registry URL for dependencies     | string | false    |         |
 
