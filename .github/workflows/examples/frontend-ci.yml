@@ -1,0 +1,19 @@
+name: Frontend CI
+
+on:
+    push:
+        branches:
+            - main
+        pull_request:
+            branches:
+                - main
+
+jobs:
+    build:
+        uses: andrewdyer/github-workflows/workflows/node/build.yml@main
+
+    test:
+        uses: andrewdyer/github-workflows/workflows/node/test.yml@main
+
+    typecheck:
+        uses: andrewdyer/github-workflows/workflows/node/type-check.yml@main
