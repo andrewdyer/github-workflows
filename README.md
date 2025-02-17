@@ -20,7 +20,7 @@ Reusable actions to be used in workflows.
 
 #### **Cache Dependencies**
 
-This action caches dependencies for `npm`, `yarn`, and `pnpm` package managers to speed up workflow execution.
+This action caches dependencies for package managers to speed up workflow execution.
 
 ```yml
 jobs:
@@ -40,7 +40,7 @@ jobs:
 
 #### **Prepare Node**
 
-This action sets up a Node.js environment and installs dependencies for TypeScript projects. It supports `npm`, `yarn`, and `pnpm` as package managers.
+This action sets up a Node.js environment and installs dependencies for TypeScript projects.
 
 ```yml
 jobs:
