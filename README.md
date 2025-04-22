@@ -58,6 +58,26 @@ jobs:
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm                         |
 | registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
+### Prepare PHP
+
+This action sets up a PHP environment and installs dependencies for CI jobs.
+
+```yml
+jobs:
+  build:
+    steps:
+      - name: Prepare PHP Environment
+        uses: andrewdyer/github-workflows/.github/actions/prepare-php@main
+        with:
+          php-version: 8.1
+```
+
+#### **Supported Inputs**
+
+| Input        | Description          | Type   | Required | Default |
+| ------------ | -------------------- | ------ | -------- | ------- |
+| php-version  | PHP version to use   | string | false    | 8.3     |
+
 ## Workflows
 
 ### Node Build
