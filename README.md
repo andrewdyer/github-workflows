@@ -10,11 +10,11 @@ Licensed under the [MIT license](https:/opensource.org/licenses/MIT) and is free
 
 ## Introduction
 
-This repository contains a collection of GitHub Actions and workflows designed to streamline the development process for Node.js and TypeScript projects.
+This repository contains a collection of [GitHub Actions](#actions) for [Node.js](#nodejs-actions) and [PHP](#php-actions), as well as [workflows](#workflows) for automating tasks in [Node.js](#nodejs-workflows) and [PHP](#php-workflows) projects. These tools help streamline development processes by automating dependency management, environment setup, and CI/CD pipelines.
 
 ## Actions
 
-### Node
+### Node.js Actions
 
 Actions to optimize workflows for Node.js projects.
 
@@ -62,7 +62,7 @@ jobs:
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm                         |
 | registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
-### PHP
+### PHP Actions
 
 Actions to optimize workflows for PHP projects.
 
