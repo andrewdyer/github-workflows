@@ -16,6 +16,8 @@ This repository contains a collection of GitHub Actions and workflows designed t
 
 ### Node
 
+Actions to optimize workflows for Node.js projects.
+
 #### **Cache Dependencies**
 
 This action caches dependencies for package managers to speed up workflow execution.
@@ -61,6 +63,8 @@ jobs:
 | registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
 ### PHP
+
+Actions to optimize workflows for PHP projects.
 
 #### **Prepare PHP**
 
