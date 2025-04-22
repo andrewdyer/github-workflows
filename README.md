@@ -88,7 +88,11 @@ jobs:
 
 ## Workflows
 
-### Node Build
+### Node.js Workflows
+
+Workflows designed to automate common Node.js project tasks.
+
+#### **Node Build**
 
 A workflow to build Node.js projects, including steps for checking out the repository, preparing the environment, and running the build script.
 
@@ -108,7 +112,7 @@ jobs:
     uses: andrewdyer/github-workflows/.github/workflows/build.yml@main
 ```
 
-### Node Test
+#### **Node Test**
 
 A workflow to test Node.js projects, including steps for checking out the repository, preparing the environment, and running the test script.
 
@@ -128,7 +132,7 @@ jobs:
     uses: andrewdyer/github-workflows/.github/workflows/test.yml@main
 ```
 
-### Node Type-check
+#### **Node Type-check**
 
 A workflow to run type-checking for Node.js projects, including steps for checking out the repository, preparing the environment, and running the type-check script.
 
@@ -147,3 +151,8 @@ jobs:
   typecheck:
     uses: andrewdyer/github-workflows/.github/workflows/type-check.yml@main
 ```
+
+
+### PHP Workflows
+
+Workflows designed to automate common PHP project tasks.
