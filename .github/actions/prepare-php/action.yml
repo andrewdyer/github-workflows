@@ -1,0 +1,22 @@
+name: Prepare PHP Environment
+description: Sets up PHP and installs dependencies for CI jobs
+
+inputs:
+  php-version:
+    description: "PHP version to use"
+    required: false
+    default: "8.3"
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        tools: composer
+
+    - name: Install dependencies
+      run: composer install
+      shell: bash
