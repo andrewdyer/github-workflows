@@ -155,3 +155,23 @@ jobs:
 ### PHP Workflows
 
 Workflows designed to automate common PHP project tasks.
+
+#### **PHP Test**
+
+A workflow to test PHP projects, including steps for checking out the repository, preparing the environment, and running the test script.
+
+```yml
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    uses: andrewdyer/github-workflows/.github/workflows/php-test.yml@main
+```

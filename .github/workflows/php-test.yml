@@ -1,0 +1,25 @@
+name: Test
+
+on:
+    workflow_call:
+        inputs:
+          php-version:
+            description: "PHP version to use"
+            required: false
+            default: "8.3"
+            type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare
+        uses: andrewdyer/github-workflows/.github/actions/prepare-php@main
+        with:
+          php-version: ${{ inputs.php-version }}
+
+      - name: Run tests
+        run: composer test
+        shell: bash
