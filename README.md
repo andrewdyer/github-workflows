@@ -82,9 +82,9 @@ jobs:
 
 ##### **Supported Inputs**
 
-| Input        | Description          | Type   | Required | Default |
-| ------------ | -------------------- | ------ | -------- | ------- |
-| php-version  | PHP version to use   | string | false    | 8.3     |
+| Input       | Description        | Type   | Required | Default |
+| ----------- | ------------------ | ------ | -------- | ------- |
+| php-version | PHP version to use | string | false    | 8.3     |
 
 ## Workflows
 
@@ -151,7 +151,6 @@ jobs:
   typecheck:
     uses: andrewdyer/github-workflows/.github/workflows/type-check.yml@main
 ```
-
 
 ### PHP Workflows
 
