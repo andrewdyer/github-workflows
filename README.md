@@ -14,7 +14,9 @@ This repository contains a collection of GitHub Actions and workflows designed t
 
 ## Actions
 
-### Cache Dependencies
+### Node
+
+#### **Cache Dependencies**
 
 This action caches dependencies for package managers to speed up workflow execution.
 
@@ -28,13 +30,13 @@ jobs:
           package-manager: yarn
 ```
 
-#### **Supported Inputs**
+##### **Supported Inputs**
 
 | Input           | Description                              | Type   | Required | Default |
 | --------------- | ---------------------------------------- | ------ | -------- | ------- |
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | true     |         |
 
-### Prepare Node
+#### **Prepare Node**
 
 This action sets up a Node.js environment and installs dependencies for TypeScript projects.
 
@@ -50,7 +52,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
 ```
 
-#### **Supported Inputs**
+##### **Supported Inputs**
 
 | Input           | Description                              | Type   | Required | Default                     |
 | --------------- | ---------------------------------------- | ------ | -------- | --------------------------- |
@@ -58,7 +60,9 @@ jobs:
 | package-manager | Package manager to use (npm, yarn, pnpm) | string | false    | npm                         |
 | registry-url    | Custom registry URL for dependencies     | string | false    | https://registry.npmjs.org/ |
 
-### Prepare PHP
+### PHP
+
+#### **Prepare PHP**
 
 This action sets up a PHP environment and installs dependencies for CI jobs.
 
@@ -72,7 +76,7 @@ jobs:
           php-version: 8.1
 ```
 
-#### **Supported Inputs**
+##### **Supported Inputs**
 
 | Input        | Description          | Type   | Required | Default |
 | ------------ | -------------------- | ------ | -------- | ------- |
