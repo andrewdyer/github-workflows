@@ -152,6 +152,28 @@ jobs:
     uses: andrewdyer/github-workflows/.github/workflows/type-check.yml@main
 ```
 
+#### **Playwright**
+
+A workflow to run end-to-end (E2E) tests using Playwright, including steps for checking out the repository, preparing the environment, installing Playwright browsers, and running the tests.
+
+```yml
+name: E2E Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-e2e:
+    uses: andrewdyer/github-workflows/.github/workflows/playwright.yml@main
+    with:
+      package-manager: yarn
+```
+
 ### PHP Workflows
 
 Workflows designed to automate common PHP project tasks.
