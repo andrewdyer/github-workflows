@@ -1,0 +1,34 @@
+name: E2E Test
+
+on:
+  workflow_call:
+    inputs:
+      package-manager:
+        description: "Package manager to use (npm, yarn, pnpm)"
+        required: false
+        default: "npm"
+        type: string
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: andrewdyer/github-workflows/.github/actions/cache-dependencies@main
+        with:
+          package-manager: ${{ inputs.package-manager }}
+
+      - name: Prepare environment
+        uses: andrewdyer/github-workflows/.github/actions/prepare-node@main
+        with:
+          package-manager: ${{ inputs.package-manager }}
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
