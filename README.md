@@ -1,4 +1,4 @@
-![GitHub Workflows](https://raw.githubusercontent.com/andrewdyer/public-assets/refs/heads/main/images/covers/github-workflows.png)
+![GitHub Workflows](https://public-assets.andrewdyer.rocks/images/covers/github-workflows.png)
 
 # GitHub Workflows
 
