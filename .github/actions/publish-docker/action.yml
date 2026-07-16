@@ -8,6 +8,10 @@ inputs:
   version:
     description: Image version tag
     required: true
+  app:
+    description: Optional application name included in deployment events
+    required: false
+    default: ""
   docker-registry:
     description: Container registry host
     required: false
@@ -116,5 +120,4 @@ runs:
           -H "Authorization: Bearer $GH_TOKEN" \
           -H "Accept: application/vnd.github+json" \
           "https://api.github.com/repos/${OWNER}/${REPO}/dispatches" \
-          -d "{\"event_type\":\"${{ inputs.deploy-event-type }}\",\"client_payload\":{\"image\":\"${{ inputs.image }}\",\"version\":\"${{ inputs.version }}\"}}"
-
+          -d "{\"event_type\":\"${{ inputs.deploy-event-type }}\",\"client_payload\":{\"app\":\"${{ inputs.app }}\",\"image\":\"${{ inputs.image }}\",\"version\":\"${{ inputs.version }}\"}}"
