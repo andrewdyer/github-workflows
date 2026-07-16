@@ -1,0 +1,32 @@
+name: Test / PHP
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        description: PHP version to use
+        required: false
+        type: string
+        default: '8.3'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run unit tests
+        run: vendor/bin/phpunit
