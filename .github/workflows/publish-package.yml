@@ -1,0 +1,81 @@
+name: Publish / Package
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to use
+        required: false
+        type: string
+        default: "22.20.0"
+      registry-url:
+        description: Package registry URL
+        required: false
+        type: string
+        default: https://registry.npmjs.org
+      scope:
+        description: Package scope
+        required: false
+        type: string
+        default: ""
+      package-directory:
+        description: Directory containing the package to publish
+        required: false
+        type: string
+        default: .
+      install-directory:
+        description: Directory in which dependencies are installed
+        required: false
+        type: string
+        default: .
+      access:
+        description: Package access level
+        required: false
+        type: string
+        default: public
+      install-dependencies:
+        description: Whether to install dependencies before publishing
+        required: false
+        type: boolean
+        default: true
+      actions-ref:
+        description: Git ref from this repository used to load composite actions
+        required: false
+        type: string
+        default: main
+    secrets:
+      package-token:
+        required: true
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Checkout workflow actions
+        uses: actions/checkout@v4
+        with:
+          repository: andrewdyer/github-workflows
+          ref: ${{ inputs.actions-ref }}
+          path: .github-workflows
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+
+      - name: Publish package
+        uses: ./.github/actions/publish-package
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry-url }}
+          scope: ${{ inputs.scope }}
+          package-directory: ${{ inputs.package-directory }}
+          install-directory: ${{ inputs.install-directory }}
+          access: ${{ inputs.access }}
+          install-dependencies: ${{ inputs.install-dependencies }}
+          package-token: ${{ secrets.package-token }}

@@ -1,0 +1,122 @@
+name: Publish / Docker
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Image version tag to publish
+        required: true
+        type: string
+      image:
+        description: Fully qualified image name without a tag
+        required: true
+        type: string
+      app:
+        description: Optional application name included in deployment events
+        required: false
+        type: string
+        default: ""
+      docker-registry:
+        description: Container registry host
+        required: false
+        type: string
+        default: ghcr.io
+      docker-file:
+        description: Path to the Dockerfile
+        required: false
+        type: string
+        default: Dockerfile
+      docker-context:
+        description: Docker build context
+        required: false
+        type: string
+        default: .
+      build-args:
+        description: Newline-separated Docker build arguments
+        required: false
+        type: string
+        default: ""
+      build-secret-id:
+        description: BuildKit secret identifier
+        required: false
+        type: string
+        default: ""
+      push-latest-tag:
+        description: Whether to push the latest tag
+        required: false
+        type: boolean
+        default: true
+      dispatch-deploy:
+        description: Whether to dispatch a deployment event
+        required: false
+        type: boolean
+        default: false
+      deploy-event-type:
+        description: Deployment event type
+        required: false
+        type: string
+        default: deploy
+      deploy-owner:
+        description: Repository owner receiving the deployment event
+        required: false
+        type: string
+        default: ""
+      deploy-repo:
+        description: Repository receiving the deployment event
+        required: false
+        type: string
+        default: ""
+      actions-ref:
+        description: Git ref from this repository used to load composite actions
+        required: false
+        type: string
+        default: main
+    secrets:
+      registry-username:
+        required: false
+      registry-token:
+        required: false
+      build-secret:
+        required: false
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Checkout workflow actions
+        uses: actions/checkout@v4
+        with:
+          repository: andrewdyer/github-workflows
+          ref: ${{ inputs.actions-ref }}
+          path: .github-workflows
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+
+      - name: Publish Docker image
+        uses: ./.github/actions/publish-docker
+        with:
+          image: ${{ inputs.image }}
+          version: ${{ inputs.version }}
+          app: ${{ inputs.app }}
+          docker-registry: ${{ inputs.docker-registry }}
+          docker-file: ${{ inputs.docker-file }}
+          docker-context: ${{ inputs.docker-context }}
+          build-args: ${{ inputs.build-args }}
+          build-secret-id: ${{ inputs.build-secret-id }}
+          build-secret: ${{ secrets.build-secret }}
+          registry-username: ${{ secrets.registry-username != '' && secrets.registry-username || github.actor }}
+          registry-token: ${{ secrets.registry-token != '' && secrets.registry-token || github.token }}
+          push-latest-tag: ${{ inputs.push-latest-tag }}
+          dispatch-deploy: ${{ inputs.dispatch-deploy }}
+          deploy-event-type: ${{ inputs.deploy-event-type }}
+          deploy-owner: ${{ inputs.deploy-owner }}
+          deploy-repo: ${{ inputs.deploy-repo }}
+          github-token: ${{ github.token }}
