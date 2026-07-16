@@ -1,0 +1,117 @@
+name: Publish / Docker
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: The Git tag that triggered the publish (e.g. "v1.2.3")
+        required: true
+        type: string
+      docker-registry:
+        description: Container registry to push images to
+        required: false
+        type: string
+        default: 'ghcr.io'
+      docker-file:
+        description: Path to the Dockerfile
+        required: false
+        type: string
+        default: 'Dockerfile'
+      docker-context:
+        description: Docker build context path
+        required: false
+        type: string
+        default: '.'
+      image:
+        description: Fully qualified image name without a tag
+        required: true
+        type: string
+      push-latest-tag:
+        description: Whether to push the latest tag alongside the version tag
+        required: false
+        type: boolean
+        default: true
+      dispatch-deploy:
+        description: Whether to fire a repository_dispatch event after a successful image push
+        required: false
+        type: boolean
+        default: false
+      deploy-event-type:
+        description: The repository_dispatch event type to fire
+        required: false
+        type: string
+        default: 'deploy'
+      deploy-owner:
+        description: >
+          Owner of the repository to dispatch to. When empty, defaults to
+          the owner of the calling repository.
+        required: false
+        type: string
+        default: ''
+      deploy-repo:
+        description: >
+          Repository name to dispatch to. When empty, defaults to the
+          calling repository.
+        required: false
+        type: string
+        default: ''
+    secrets:
+      registry-username:
+        required: false
+      registry-token:
+        required: false
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.docker-registry }}
+          username: ${{ secrets.registry-username != '' && secrets.registry-username || github.actor }}
+          password: ${{ secrets.registry-token != '' && secrets.registry-token || github.token }}
+
+      - name: Build and push Docker image
+        run: |
+          # Strip leading v from tag (e.g. v1.2.3 -> 1.2.3)
+          VERSION="${{ inputs.tag }}"
+          VERSION="${VERSION#v}"
+
+          IMAGE="${{ inputs.image }}"
+
+          echo "Building and pushing $IMAGE:$VERSION..."
+
+          docker build \
+            -f "${{ inputs.docker-file }}" \
+            -t "$IMAGE:$VERSION" \
+            ${{ inputs.push-latest-tag && format('-t "{0}:latest"', '$IMAGE') || '' }} \
+            "${{ inputs.docker-context }}"
+
+          docker push "$IMAGE:$VERSION"
+
+          if [[ "${{ inputs.push-latest-tag }}" == "true" ]]; then
+            docker push "$IMAGE:latest"
+          fi
+
+          if [[ "${{ inputs.dispatch-deploy }}" == "true" ]]; then
+            OWNER="${{ inputs.deploy-owner != '' && inputs.deploy-owner || github.repository_owner }}"
+            REPO="${{ inputs.deploy-repo != '' && inputs.deploy-repo || github.event.repository.name }}"
+
+            echo "Dispatching ${{ inputs.deploy-event-type }} event to ${OWNER}/${REPO}..."
+
+            curl --fail --show-error \
+              -X POST \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${OWNER}/${REPO}/dispatches \
+              -d "{\"event_type\":\"${{ inputs.deploy-event-type }}\",\"client_payload\":{\"image\":\"$IMAGE\",\"version\":\"$VERSION\"}}"
+          fi
