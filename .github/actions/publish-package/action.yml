@@ -1,0 +1,89 @@
+name: Publish package
+description: Publish a pnpm package to a package registry
+
+inputs:
+  node-version:
+    description: Node.js version to use
+    required: false
+    default: 22.20.0
+  registry-url:
+    description: Package registry URL
+    required: false
+    default: https://registry.npmjs.org
+  scope:
+    description: Package scope
+    required: false
+    default: ""
+  package-directory:
+    description: Directory containing the package to publish
+    required: false
+    default: .
+  install-directory:
+    description: Directory in which dependencies are installed
+    required: false
+    default: .
+  access:
+    description: Package access level (public or restricted)
+    required: false
+    default: public
+  install-dependencies:
+    description: Whether to install dependencies before publishing
+    required: false
+    default: "true"
+  package-token:
+    description: Package registry authentication token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate inputs
+      shell: bash
+      run: |
+        case "${{ inputs.access }}" in
+          public|restricted) ;;
+          *)
+            echo "❌ access must be public or restricted"
+            exit 1
+            ;;
+        esac
+
+        if [[ ! -f "${{ inputs.package-directory }}/package.json" ]]; then
+          echo "❌ No package.json found in ${{ inputs.package-directory }}"
+          exit 1
+        fi
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
+        scope: ${{ inputs.scope }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Install dependencies
+      if: inputs.install-dependencies == 'true'
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.package-token }}
+      run: |
+        cd "${{ inputs.install-directory }}"
+        pnpm install --frozen-lockfile
+
+    - name: Publish package
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.package-token }}
+      run: |
+        PACKAGE_DIRECTORY="${{ inputs.package-directory }}"
+        PRIVATE=$(node -p "require('./$PACKAGE_DIRECTORY/package.json').private ?? false")
+
+        if [[ "$PRIVATE" == "true" ]]; then
+          echo "Skipping $PACKAGE_DIRECTORY (private package)"
+          exit 0
+        fi
+
+        cd "$PACKAGE_DIRECTORY"
+        pnpm publish --no-git-checks --access "${{ inputs.access }}"

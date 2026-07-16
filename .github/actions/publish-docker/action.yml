@@ -1,0 +1,120 @@
+name: Publish Docker image
+description: Build and publish a Docker image to a container registry
+
+inputs:
+  image:
+    description: Fully qualified image name without a tag
+    required: true
+  version:
+    description: Image version tag
+    required: true
+  docker-registry:
+    description: Container registry host
+    required: false
+    default: ghcr.io
+  docker-file:
+    description: Path to the Dockerfile
+    required: false
+    default: Dockerfile
+  docker-context:
+    description: Docker build context
+    required: false
+    default: .
+  build-args:
+    description: Newline-separated Docker build arguments
+    required: false
+    default: ""
+  build-secret-id:
+    description: BuildKit secret identifier
+    required: false
+    default: ""
+  build-secret:
+    description: BuildKit secret value
+    required: false
+    default: ""
+  registry-username:
+    description: Container registry username
+    required: true
+  registry-token:
+    description: Container registry token or password
+    required: true
+  push-latest-tag:
+    description: Whether to push the latest tag
+    required: false
+    default: "true"
+  dispatch-deploy:
+    description: Whether to dispatch a deployment event
+    required: false
+    default: "false"
+  deploy-event-type:
+    description: Deployment event type
+    required: false
+    default: deploy
+  deploy-owner:
+    description: Repository owner receiving the deployment event
+    required: false
+    default: ""
+  deploy-repo:
+    description: Repository receiving the deployment event
+    required: false
+    default: ""
+  github-token:
+    description: GitHub token used for deployment dispatch
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Login to container registry
+      uses: docker/login-action@v4
+      with:
+        registry: ${{ inputs.docker-registry }}
+        username: ${{ inputs.registry-username }}
+        password: ${{ inputs.registry-token }}
+
+    - name: Validate build secret
+      shell: bash
+      env:
+        BUILD_SECRET: ${{ inputs.build-secret }}
+      run: |
+        if [[ -n "${{ inputs.build-secret-id }}" && -z "$BUILD_SECRET" ]]; then
+          echo "❌ build-secret must be provided when build-secret-id is set"
+          exit 1
+        fi
+
+        if [[ -z "${{ inputs.build-secret-id }}" && -n "$BUILD_SECRET" ]]; then
+          echo "❌ build-secret-id must be set when build-secret is provided"
+          exit 1
+        fi
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v7
+      with:
+        context: ${{ inputs.docker-context }}
+        file: ${{ inputs.docker-file }}
+        push: true
+        tags: |
+          ${{ inputs.image }}:${{ inputs.version }}
+          ${{ inputs.push-latest-tag == 'true' && format('{0}:latest', inputs.image) || '' }}
+        build-args: ${{ inputs.build-args }}
+        secrets: ${{ inputs.build-secret-id != '' && format('{0}={1}', inputs.build-secret-id, inputs.build-secret) || '' }}
+
+    - name: Dispatch deployment
+      if: inputs.dispatch-deploy == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        OWNER="${{ inputs.deploy-owner != '' && inputs.deploy-owner || github.repository_owner }}"
+        REPO="${{ inputs.deploy-repo != '' && inputs.deploy-repo || github.event.repository.name }}"
+
+        curl --fail --show-error \
+          -X POST \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${OWNER}/${REPO}/dispatches" \
+          -d "{\"event_type\":\"${{ inputs.deploy-event-type }}\",\"client_payload\":{\"image\":\"${{ inputs.image }}\",\"version\":\"${{ inputs.version }}\"}}"
+

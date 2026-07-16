@@ -12,32 +12,37 @@ on:
         description: Package registry URL
         required: false
         type: string
-        default: "https://registry.npmjs.org"
+        default: https://registry.npmjs.org
       scope:
-        description: Package scope (e.g. "@your-org")
+        description: Package scope
         required: false
         type: string
         default: ""
       package-directory:
-        description: Directory containing the package.json to publish
+        description: Directory containing the package to publish
         required: false
         type: string
-        default: "."
+        default: .
       install-directory:
-        description: Directory in which to install dependencies
+        description: Directory in which dependencies are installed
         required: false
         type: string
-        default: "."
+        default: .
       access:
-        description: Package access level (public or restricted)
+        description: Package access level
         required: false
         type: string
-        default: "public"
+        default: public
       install-dependencies:
         description: Whether to install dependencies before publishing
         required: false
         type: boolean
         default: true
+      actions-ref:
+        description: Git ref from this repository used to load composite actions
+        required: false
+        type: string
+        default: main
     secrets:
       package-token:
         required: true
@@ -51,54 +56,26 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout
+      - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Validate inputs
-        run: |
-          case "${{ inputs.access }}" in
-            public|restricted) ;;
-            *)
-              echo "❌ access must be public or restricted"
-              exit 1
-              ;;
-          esac
+      - name: Checkout workflow actions
+        uses: actions/checkout@v4
+        with:
+          repository: andrewdyer/github-workflows
+          ref: ${{ inputs.actions-ref }}
+          path: .github-workflows
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
 
-          if [[ ! -f "${{ inputs.package-directory }}/package.json" ]]; then
-            echo "❌ No package.json found in ${{ inputs.package-directory }}"
-            exit 1
-          fi
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Publish package
+        uses: ./.github/actions/publish-package
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.registry-url }}
           scope: ${{ inputs.scope }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        if: inputs.install-dependencies
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.package-token }}
-        run: |
-          cd "${{ inputs.install-directory }}"
-          pnpm install --frozen-lockfile
-
-      - name: Publish package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.package-token }}
-        run: |
-          PACKAGE_DIRECTORY="${{ inputs.package-directory }}"
-          PRIVATE=$(node -p "require('./$PACKAGE_DIRECTORY/package.json').private ?? false")
-
-          if [[ "$PRIVATE" == "true" ]]; then
-            echo "Skipping $PACKAGE_DIRECTORY (private package)"
-            exit 0
-          fi
-
-          cd "$PACKAGE_DIRECTORY"
-
-          pnpm publish --no-git-checks --access "${{ inputs.access }}"
+          package-directory: ${{ inputs.package-directory }}
+          install-directory: ${{ inputs.install-directory }}
+          access: ${{ inputs.access }}
+          install-dependencies: ${{ inputs.install-dependencies }}
+          package-token: ${{ secrets.package-token }}

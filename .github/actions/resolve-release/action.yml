@@ -1,0 +1,96 @@
+name: Resolve release
+description: Resolve a Release Please component tag to a package or application
+
+inputs:
+  tag:
+    description: Component tag in <component>-v<version> format
+    required: true
+  manifest-file:
+    description: Path to the Release Please manifest
+    required: false
+    default: .github/.release-please-manifest.json
+  docker-registry:
+    description: Container registry used to construct application image names
+    required: false
+    default: ghcr.io
+  image-namespace:
+    description: Image namespace without the registry or application suffix
+    required: false
+    default: ""
+
+outputs:
+  kind:
+    description: Resolved component kind (app or package)
+    value: ${{ steps.resolve.outputs.kind }}
+  path:
+    description: Resolved component path
+    value: ${{ steps.resolve.outputs.path }}
+  app:
+    description: Resolved application name
+    value: ${{ steps.resolve.outputs.app }}
+  image:
+    description: Fully qualified application image without a tag
+    value: ${{ steps.resolve.outputs.image }}
+  version:
+    description: Resolved component version
+    value: ${{ steps.resolve.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve component
+      id: resolve
+      shell: bash
+      env:
+        TAG: ${{ inputs.tag }}
+        MANIFEST_FILE: ${{ inputs.manifest-file }}
+        DOCKER_REGISTRY: ${{ inputs.docker-registry }}
+        IMAGE_NAMESPACE: ${{ inputs.image-namespace }}
+      run: |
+        COMPONENT="${TAG%-v*}"
+        VERSION="${TAG##*-v}"
+
+        MATCHES=$(jq -r --arg component "$COMPONENT" '
+          to_entries[]
+          | select(.key | endswith($component))
+          | .key
+        ' "$MANIFEST_FILE")
+
+        COUNT=$(echo "$MATCHES" | sed '/^$/d' | wc -l | tr -d ' ')
+
+        if [[ "$COUNT" -eq 0 ]]; then
+          echo "❌ No manifest entry found for component: $COMPONENT"
+          exit 1
+        fi
+
+        if [[ "$COUNT" -gt 1 ]]; then
+          echo "❌ Multiple manifest entries found for component: $COMPONENT"
+          echo "$MATCHES"
+          exit 1
+        fi
+
+        if [[ "$MATCHES" == packages/* ]]; then
+          KIND=package
+          APP=""
+          IMAGE=""
+        elif [[ "$MATCHES" == apps/* ]]; then
+          KIND=app
+          APP=$(basename "$MATCHES")
+
+          if [[ -n "$IMAGE_NAMESPACE" ]]; then
+            NAMESPACE="$IMAGE_NAMESPACE"
+          else
+            NAMESPACE=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          fi
+
+          IMAGE="${DOCKER_REGISTRY}/${NAMESPACE}-${APP}"
+        else
+          echo "❌ Component must resolve to a path under apps/ or packages/"
+          exit 1
+        fi
+
+        echo "kind=$KIND" >> "$GITHUB_OUTPUT"
+        echo "path=$MATCHES" >> "$GITHUB_OUTPUT"
+        echo "app=$APP" >> "$GITHUB_OUTPUT"
+        echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
