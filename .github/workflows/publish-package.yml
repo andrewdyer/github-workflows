@@ -1,0 +1,104 @@
+name: Publish / Package
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to use
+        required: false
+        type: string
+        default: "22.20.0"
+      registry-url:
+        description: Package registry URL
+        required: false
+        type: string
+        default: "https://registry.npmjs.org"
+      scope:
+        description: Package scope (e.g. "@your-org")
+        required: false
+        type: string
+        default: ""
+      package-directory:
+        description: Directory containing the package.json to publish
+        required: false
+        type: string
+        default: "."
+      install-directory:
+        description: Directory in which to install dependencies
+        required: false
+        type: string
+        default: "."
+      access:
+        description: Package access level (public or restricted)
+        required: false
+        type: string
+        default: "public"
+      install-dependencies:
+        description: Whether to install dependencies before publishing
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      package-token:
+        required: true
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate inputs
+        run: |
+          case "${{ inputs.access }}" in
+            public|restricted) ;;
+            *)
+              echo "❌ access must be public or restricted"
+              exit 1
+              ;;
+          esac
+
+          if [[ ! -f "${{ inputs.package-directory }}/package.json" ]]; then
+            echo "❌ No package.json found in ${{ inputs.package-directory }}"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry-url }}
+          scope: ${{ inputs.scope }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        if: inputs.install-dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.package-token }}
+        run: |
+          cd "${{ inputs.install-directory }}"
+          pnpm install --frozen-lockfile
+
+      - name: Publish package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.package-token }}
+        run: |
+          PACKAGE_DIRECTORY="${{ inputs.package-directory }}"
+          PRIVATE=$(node -p "require('./$PACKAGE_DIRECTORY/package.json').private ?? false")
+
+          if [[ "$PRIVATE" == "true" ]]; then
+            echo "Skipping $PACKAGE_DIRECTORY (private package)"
+            exit 0
+          fi
+
+          cd "$PACKAGE_DIRECTORY"
+
+          pnpm publish --no-git-checks --access "${{ inputs.access }}"
