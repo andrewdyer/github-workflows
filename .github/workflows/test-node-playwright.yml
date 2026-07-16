@@ -1,0 +1,70 @@
+name: Test / Node.js / Playwright
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to use
+        required: false
+        type: string
+        default: "22.20.0"
+      registry-url:
+        description: npm registry URL for private package authentication
+        required: false
+        type: string
+        default: "https://npm.pkg.github.com"
+      scope:
+        description: npm scope for private package authentication (e.g. "@your-org")
+        required: false
+        type: string
+        default: ""
+      package-directory:
+        description: Directory containing the Playwright package
+        required: false
+        type: string
+        default: "."
+    secrets:
+      packages-token:
+        required: false
+
+jobs:
+  test:
+    name: Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.registry-url }}
+          scope: ${{ inputs.scope }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.packages-token }}
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install Playwright browsers
+        working-directory: ${{ inputs.package-directory }}
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm e2e
