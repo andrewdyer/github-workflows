@@ -48,8 +48,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.packages-token }}
 
-      - name: Build all packages
+      - name: Build project
         run: pnpm build
+
+      - name: Run type checks
+        run: pnpm typecheck
 
       - name: Run unit tests
         run: pnpm test
